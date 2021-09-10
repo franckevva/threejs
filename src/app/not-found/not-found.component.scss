@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
+  background-image: url("/assets/images/404.jpeg");
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: center center;
+}
