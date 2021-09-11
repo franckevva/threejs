@@ -1,6 +1,13 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
 import * as THREE from 'three';
+
+const SCENE_PATH = '/assets/scenes/fantasy_book/scene.gltf';
 
 @Component({
   selector: 'app-first',
@@ -19,45 +26,78 @@ export class FirstComponent implements AfterViewInit {
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
-  private geometry = new THREE.BoxGeometry();
-  private material = new THREE.MeshBasicMaterial({ color: '#ffa500' });
-  private cube: THREE.Mesh = new THREE.Mesh(this.geometry, this.material);
+
+  private loader = new GLTFLoader();
+  private mixer: THREE.AnimationMixer;
+  private clock = new THREE.Clock();
+  private pmremGenerator: THREE.PMREMGenerator;
+  private controls: OrbitControls;
+  private dracoLoader: DRACOLoader;
 
   constructor() {}
 
   ngAfterViewInit() {
     this.createScene();
-    this.startRender();
   }
 
   private createScene() {
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      antialias: true,
+    });
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
+
+    this.pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+
+    // SCENE
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color('#eaeeaf');
-    this.camera = new THREE.PerspectiveCamera(100, this.aspectRatio, 0.1, 1000);
+    this.scene.environment = this.pmremGenerator.fromScene(
+      new RoomEnvironment(),
+      0.04
+    ).texture;
 
-    this.scene.add(this.cube);
-    this.camera.position.z = 7;
-  }
+    this.camera = new THREE.PerspectiveCamera(100, this.aspectRatio, 1, 1000);
+    this.camera.position.set(15, 30, 70);
 
-  private startRender() {
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
-    this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
-    // document.body.appendChild(this.renderer.domElement);
+    this.controls = new OrbitControls(this.camera, this.canvas);
+    this.controls.target.set(0, 0.5, 0);
+    this.controls.update();
+    this.controls.enablePan = false;
+    this.controls.enableDamping = true;
 
-    this.animate();
+    this.dracoLoader = new DRACOLoader();
+    this.dracoLoader.setDecoderPath('three/examples/jsm/libs/draco/gltf');
+
+    this.loader.setDRACOLoader(this.dracoLoader);
+    this.loader.load(
+      SCENE_PATH,
+      (gltf) => {
+        const model = gltf.scene;
+        model.position.set(1, 1, 10);
+        model.scale.set(1, 1, 1);
+
+        this.scene.add(model);
+
+        this.mixer = new THREE.AnimationMixer(model);
+        this.mixer.clipAction(gltf.animations[0]).play();
+        this.animate();
+      },
+      undefined,
+      (error) => console.log(error)
+    );
   }
 
   private animate() {
     let component: FirstComponent = this;
     (function render() {
       requestAnimationFrame(render);
-      component.animateCube();
+      const delta = component.clock.getDelta();
+      component.mixer.update(delta);
+      component.controls.update();
       component.renderer.render(component.scene, component.camera);
     })();
-  }
-
-  private animateCube() {
-    this.cube.rotation.x += 0.02;
-    this.cube.rotation.y += 0.01;
   }
 }
