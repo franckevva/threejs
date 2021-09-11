@@ -10,8 +10,7 @@ const routes: Routes = [
   },
   {
     path: 'scene',
-    loadChildren: () =>
-      import('./scene/scene.module').then((m) => m.SceneModule),
+    loadChildren: () => import('./scene').then((m) => m.SceneModule),
   },
   { path: '404', component: NotFoundComponent },
   { path: '', pathMatch: 'full', redirectTo: 'scene' },

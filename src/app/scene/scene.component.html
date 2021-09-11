@@ -1,1 +1,7 @@
-<p>scene works!</p>
+<ng-container *ngIf="canLoad; else warningWrapp">
+  <router-outlet></router-outlet>
+</ng-container>
+
+<ng-template #warningWrapp>
+  <h2 class="warning">{{ warning }}</h2>
+</ng-template>
