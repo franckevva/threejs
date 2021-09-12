@@ -6,3 +6,9 @@ mat-nav-list.list-horizontal {
     width: auto;
   }
 }
+
+:host {
+  display: block;
+  position: relative;
+  z-index: 100;
+}

@@ -1,1 +1,7 @@
-<canvas #canvas id="canvas"></canvas>
+<div class="loading" *ngIf="loadingProgress">
+  <mat-progress-bar
+    mode="determinate"
+    [value]="loadingProgress"
+  ></mat-progress-bar>
+</div>
+<canvas [class.hidden]="loadingProgress" #canvas id="canvas"></canvas>
