@@ -68,6 +68,11 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  @HostListener('window:beforeunload', ['$event'])
+  beforeunloadHandler() {
+    this.saveCurrentScene();
+  }
+
   private get canvas(): HTMLCanvasElement {
     return this.canvasRef.nativeElement;
   }
@@ -95,8 +100,8 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
     this.service
       .getCameraState()
       .pipe(take(1))
-      .subscribe((state) => {
-        this.cameraState = state;
+      .subscribe((state: { cameraPosition: string }) => {
+        this.cameraState = state.cameraPosition;
         this.camera ? this.setCameraState() : null;
       });
   }
@@ -222,15 +227,18 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
+    this.saveCurrentScene();
+    this.renderer.dispose();
+    this.controls.dispose();
+    this.dracoLoader.dispose();
+    this.pmremGenerator.dispose();
+  }
+
+  private saveCurrentScene() {
     /* save current position of camera */
     this.service
       .setCameraState(JSON.stringify(this.camera.matrix.toArray()))
       .pipe(take(1))
       .subscribe();
-
-    this.renderer.dispose();
-    this.controls.dispose();
-    this.dracoLoader.dispose();
-    this.pmremGenerator.dispose();
   }
 }
