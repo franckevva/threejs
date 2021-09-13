@@ -4,8 +4,13 @@ import {
   ElementRef,
   HostListener,
   OnDestroy,
+  OnInit,
   ViewChild,
 } from '@angular/core';
+import { take } from 'rxjs/operators';
+
+import * as THREE from 'three';
+import { KEY_CODE } from 'src/app/share';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
@@ -13,24 +18,18 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 
-import * as THREE from 'three';
+import { SceneService } from '../scene.service';
 
 const SCENE_PATH = '/assets/scenes/fantasy_book/scene.gltf';
 const DRACO_LOADER_PATH = 'three/examples/jsm/libs/draco/gltf';
-
-export enum KEY_CODE {
-  UP_ARROW = 'ArrowUp',
-  DOWN_ARROW = 'ArrowDown',
-  RIGHT_ARROW = 'ArrowRight',
-  LEFT_ARROW = 'ArrowLeft',
-}
+const BG_COLOR = '#fdfdf4';
 
 @Component({
   selector: 'app-first',
   templateUrl: './first.component.html',
   styleUrls: ['./first.component.scss'],
 })
-export class FirstComponent implements AfterViewInit, OnDestroy {
+export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('canvas') private canvasRef: ElementRef;
 
   /* Listener key events */
@@ -88,8 +87,19 @@ export class FirstComponent implements AfterViewInit, OnDestroy {
   private dracoLoader!: DRACOLoader;
 
   public loadingProgress: number | null = 1;
+  private cameraState: string;
 
-  constructor() {}
+  constructor(private service: SceneService) {}
+
+  ngOnInit() {
+    this.service
+      .getCameraState()
+      .pipe(take(1))
+      .subscribe((state) => {
+        this.cameraState = state;
+        this.camera ? this.setCameraState() : null;
+      });
+  }
 
   ngAfterViewInit() {
     this.createRenderer();
@@ -101,14 +111,27 @@ export class FirstComponent implements AfterViewInit, OnDestroy {
   /* create scene */
   private createScene() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#fdfdf4');
+    this.scene.background = new THREE.Color(BG_COLOR);
     this.scene.environment = this.pmremGenerator.fromScene(
       new RoomEnvironment(),
       0.04
     ).texture;
 
     this.camera = new THREE.PerspectiveCamera(100, this.aspectRatio, 1, 1000);
-    this.camera.position.set(15, 30, 70);
+    this.setCameraState();
+  }
+
+  private setCameraState() {
+    if (this.cameraState) {
+      this.camera.matrix.fromArray(JSON.parse(this.cameraState));
+      this.camera.matrix.decompose(
+        this.camera.position,
+        this.camera.quaternion,
+        this.camera.scale
+      );
+    } else {
+      this.camera.position.set(15, 30, 70);
+    }
   }
 
   /* set params for renderer */
@@ -199,6 +222,12 @@ export class FirstComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    /* save current position of camera */
+    this.service
+      .setCameraState(JSON.stringify(this.camera.matrix.toArray()))
+      .pipe(take(1))
+      .subscribe();
+
     this.renderer.dispose();
     this.controls.dispose();
     this.dracoLoader.dispose();
