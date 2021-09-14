@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CubeComponent } from './cube/cube.component';
-import { FirstComponent } from './first/first.component';
+import { BookSceneComponent } from './book/book.component';
 import { SceneComponent } from './scene.component';
 
 const routes: Routes = [
@@ -14,12 +14,12 @@ const routes: Routes = [
         component: CubeComponent,
       },
       {
-        path: 'first',
-        component: FirstComponent,
+        path: 'book',
+        component: BookSceneComponent,
       },
       {
         path: '',
-        redirectTo: 'cube',
+        redirectTo: 'book',
         pathMatch: 'full',
       },
     ],

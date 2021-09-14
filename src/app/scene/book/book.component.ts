@@ -10,7 +10,7 @@ import {
 import { take } from 'rxjs/operators';
 
 import * as THREE from 'three';
-import { KEY_CODE } from 'src/app/share';
+import { ISceneState, KEY_CODE } from 'src/app/share';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
@@ -25,11 +25,11 @@ const DRACO_LOADER_PATH = 'three/examples/jsm/libs/draco/gltf';
 const BG_COLOR = '#fdfdf4';
 
 @Component({
-  selector: 'app-first',
-  templateUrl: './first.component.html',
-  styleUrls: ['./first.component.scss'],
+  selector: 'app-book',
+  templateUrl: './book.component.html',
+  styleUrls: ['./book.component.scss'],
 })
-export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
+export class BookSceneComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('canvas') private canvasRef: ElementRef;
 
   /* Listener key events */
@@ -93,7 +93,7 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public loadingProgress: number | null = 1;
   public loadingState = true;
-  private cameraState: string;
+  private cameraState: string | null;
 
   constructor(private service: SceneService) {}
 
@@ -102,8 +102,8 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
       .getCameraState()
       .pipe(take(1))
       .subscribe(
-        (state: { cameraPosition: string }) => {
-          this.cameraState = state?.cameraPosition;
+        (state: ISceneState | null) => {
+          this.cameraState = state?.cameraPosition || null;
         },
         (error) => {},
         () => {
@@ -220,7 +220,7 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
 
   /* set animate */
   private animate() {
-    let component: FirstComponent = this;
+    let component: BookSceneComponent = this;
     (function render() {
       requestAnimationFrame(render);
       const delta = component.clock.getDelta();

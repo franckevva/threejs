@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  HostListener,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -34,6 +35,19 @@ export class CubeComponent implements AfterViewInit {
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
 
+  /* update view on resize */
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    if (!this.camera || !this.renderer) {
+      return;
+    }
+
+    this.camera.aspect = this.getAspectRatio();
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
   constructor() {}
 
   ngAfterViewInit() {
@@ -44,7 +58,7 @@ export class CubeComponent implements AfterViewInit {
   private createScene() {
     // scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#eaeeaf');
+    this.scene.background = new THREE.Color('#fafff0');
     this.scene.add(this.cube);
 
     // camera

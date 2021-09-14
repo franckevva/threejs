@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { catchError, switchMap } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { ISceneState } from '../share';
@@ -29,12 +29,14 @@ export class SceneService {
     );
   }
 
-  public getCameraState(): Observable<ISceneState> {
+  public getCameraState(): Observable<ISceneState | null> {
     return this.fingerprint
       .getVisitorId()
       .pipe(
         switchMap((userId) =>
-          this.http.get<ISceneState>(`${this.url}/${userId}`)
+          this.http
+            .get<ISceneState>(`${this.url}/${userId}`)
+            .pipe(catchError((err) => of(null)))
         )
       );
   }
