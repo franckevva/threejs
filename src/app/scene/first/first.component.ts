@@ -101,11 +101,16 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
     this.service
       .getCameraState()
       .pipe(take(1))
-      .subscribe((state: { cameraPosition: string }) => {
-        this.loadingState = false;
-        this.cameraState = state?.cameraPosition;
-        this.camera ? this.setCameraState() : null;
-      });
+      .subscribe(
+        (state: { cameraPosition: string }) => {
+          this.cameraState = state?.cameraPosition;
+        },
+        (error) => {},
+        () => {
+          this.loadingState = false;
+          this.camera ? this.setCameraState() : null;
+        }
+      );
   }
 
   ngAfterViewInit() {
