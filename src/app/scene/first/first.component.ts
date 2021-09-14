@@ -92,6 +92,7 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
   private dracoLoader!: DRACOLoader;
 
   public loadingProgress: number | null = 1;
+  public loadingState = true;
   private cameraState: string;
 
   constructor(private service: SceneService) {}
@@ -101,7 +102,8 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
       .getCameraState()
       .pipe(take(1))
       .subscribe((state: { cameraPosition: string }) => {
-        this.cameraState = state.cameraPosition;
+        this.loadingState = false;
+        this.cameraState = state?.cameraPosition;
         this.camera ? this.setCameraState() : null;
       });
   }
@@ -173,6 +175,7 @@ export class FirstComponent implements AfterViewInit, OnDestroy, OnInit {
       },
       (xhr) => {
         this.loadingProgress = (xhr.loaded / xhr.total) * 100;
+        this.loadingState ? (this.loadingProgress -= 5) : null; // wait load bar while load state
       },
       (error) => console.log(error)
     );

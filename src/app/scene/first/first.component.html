@@ -1,7 +1,7 @@
-<div class="loading" *ngIf="loadingProgress">
+<div class="loading" *ngIf="loadingProgress || loadingState">
   <mat-progress-bar
     mode="determinate"
     [value]="loadingProgress"
   ></mat-progress-bar>
 </div>
-<canvas [class.hidden]="loadingProgress" #canvas id="canvas"></canvas>
+<canvas [class.hidden]="loadingProgress || loadingState" #canvas id="canvas"></canvas>
