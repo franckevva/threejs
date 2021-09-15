@@ -2,6 +2,7 @@ import * as express from "express";
 import * as cors from "cors";
 import { json } from "body-parser";
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 import { sceneRouter } from "./routes/scene";
 import connect from "./db/connect";
@@ -18,11 +19,11 @@ const app = express();
 app.use(cors(options));
 app.use(json());
 
-const path = __dirname + "../public/index.html";
-app.use(express.static(path));
+const pathLocal = path.join(__dirname, "../public");
+app.use(express.static(pathLocal));
 
 app.get("/", (req, res) => {
-  res.sendFile(path + "index.html");
+  res.sendFile(pathLocal + "index.html");
 });
 
 app.use(sceneRouter);
