@@ -180,7 +180,7 @@ export class BookSceneComponent implements AfterViewInit, OnDestroy, OnInit {
       },
       (xhr) => {
         this.loadingProgress = (xhr.loaded / xhr.total) * 100;
-        this.loadingState ? (this.loadingProgress -= 5) : null; // wait load bar while load state
+        this.loadingState ? (this.loadingProgress -= 5) : null; // wait load bar while loading state
       },
       (error) => console.log(error)
     );
@@ -196,26 +196,6 @@ export class BookSceneComponent implements AfterViewInit, OnDestroy, OnInit {
     // this.controls.autoRotate = true;
     this.controls.listenToKeyEvents(this.canvas);
     this.controls.update();
-
-    /*  this.controls = new FlyControls(this.camera, this.renderer.domElement);
-
-    this.controls.movementSpeed = 1000;
-    this.controls.domElement = this.renderer.domElement;
-    this.controls.rollSpeed = Math.PI / 24;
-    this.controls.autoForward = false;
-    this.controls.dragToLook = true; */
-
-    // controls
-
-    /*  this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    // this.controls.listenToKeyEvents( this.window ); // optional
-    //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-    this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    this.controls.dampingFactor = 0.05;
-    this.controls.screenSpacePanning = false;
-    this.controls.minDistance = 100;
-    this.controls.maxDistance = 500;
-    this.controls.maxPolarAngle = Math.PI / 2; */
   }
 
   /* set animate */
@@ -226,10 +206,6 @@ export class BookSceneComponent implements AfterViewInit, OnDestroy, OnInit {
       const delta = component.clock.getDelta();
       component.mixer.update(delta);
       component.controls.update();
-
-      // component.controls.movementSpeed = 0.33 * 100;
-      // component.controls.update(delta);
-
       component.renderer.render(component.scene, component.camera);
     })();
   }
