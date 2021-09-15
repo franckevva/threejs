@@ -10,7 +10,7 @@ import {
 import { take } from 'rxjs/operators';
 
 import * as THREE from 'three';
-import { ISceneState, KEY_CODE } from 'src/app/share';
+import { ISceneState, KEY_CODE } from 'client/app/share';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
