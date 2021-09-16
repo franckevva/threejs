@@ -10,6 +10,7 @@ Find [started app on heroku](https://franckevva-threejs.herokuapp.com//)
 
 ## Development server
 Run `npm run dev` will run nodejs server on watched mode. Server will start listing on `http://localhost:8000` as default. And opened angular app by url `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Don't forget add `.env` file
 
 
 ## Build

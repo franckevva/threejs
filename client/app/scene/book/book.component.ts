@@ -16,7 +16,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 
 import { SceneService } from '../scene.service';
 
@@ -88,7 +87,6 @@ export class BookSceneComponent implements AfterViewInit, OnDestroy, OnInit {
   private clock = new THREE.Clock();
   private pmremGenerator: THREE.PMREMGenerator;
   private controls!: OrbitControls;
-  // private controls: FlyControls;
   private dracoLoader!: DRACOLoader;
 
   public loadingProgress: number | null = 1;

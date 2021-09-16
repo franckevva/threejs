@@ -21,7 +21,12 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "three/examples/jsm/libs/dat.gui.module": [
+          "./node_modules/@types/dat.gui"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
